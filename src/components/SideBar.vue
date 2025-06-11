@@ -1,27 +1,47 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import PSELOGO from "../assets/PSELOGO.png";
+import { useRoute } from "vue-router";
 
 const navBarItems = ref([
   { label: "Dashboard", href: "/" },
   { label: "Borrow", href: "/borrow" },
-  { label: "Students", href: "/students" },
   { label: "Books", href: "/books" },
+  { label: "Students", href: "/students" },
 ]);
+
+const Logo = {
+  img: PSELOGO,
+  alt: "This is the logo",
+};
+
+const route = useRoute();
+
+const isActive = (href: string) => {
+  return route.path === href;
+};
 </script>
 
 <template>
-  <div class="flex flex-col items-center w-52 h-screen bg-gray-900">
-    <div class="border-b border-white/50">
-      <h1 class="p-4">Welcome to Dashboard</h1>
+  <!-- Sidebar -->
+  <aside class="w-52 bg-gray-900 text-white h-full shadow-lg flex flex-col">
+    <div class="px-6 py-5 border-b border-white/20">
+      <img :src="Logo.img" :alt="Logo.alt" />
     </div>
-    <ul class="space-y-2">
-      <li
-        v-for="(item, index) in navBarItems"
-        :key="index"
-        class="text-white hover:underline"
-      >
-        <a :href="item.href">{{ item.label }}</a>
+    <ul class="flex-1 p-4 space-y-3">
+      <li v-for="(item, index) in navBarItems" :key="index">
+        <router-link
+          :to="item.href"
+          :class="[
+            'px-3 py-2 rounded transition-colors block',
+            isActive(item.href)
+              ? 'bg-gray-700 font-semibold'
+              : 'hover:bg-gray-700',
+          ]"
+        >
+          {{ item.label }}
+        </router-link>
       </li>
     </ul>
-  </div>
+  </aside>
 </template>
