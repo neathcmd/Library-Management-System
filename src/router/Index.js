@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../pages/Dashboard.vue";
-import Books from "../pages/Books.vue";
-import Students from "../pages/Students.vue";
-import Borrow from "../pages/Borrow.vue";
+import Books from "../pages/book/Books.vue";
+import Students from "../pages/student/Students.vue";
+import Borrow from "../pages/borrow/Borrow.vue";
 
 const routes = [
   {

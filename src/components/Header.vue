@@ -4,13 +4,17 @@ const AdminProfile = {
   alt: "Logo",
   img: "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D",
 };
+
+const Title = "Library Management System";
 </script>
 
 <template>
-  <header class="w-full bg-gray-900 px-6 py-4 shadow">
+  <header class="w-full bg-gray-900 px-6 py-6 shadow">
     <div class="flex items-center justify-between">
       <!-- Title -->
-      <h1 class="text-white text-lg font-bold">Library Management System</h1>
+      <h1 class="text-white text-2xl font-siembold">
+        {{ Title }}
+      </h1>
 
       <!-- Admin profile section -->
       <div class="flex items-center space-x-3">
