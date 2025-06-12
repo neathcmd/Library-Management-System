@@ -24,8 +24,8 @@ const isActive = (href: string) => {
 
 <template>
   <!-- Sidebar -->
-  <aside class="w-52 bg-gray-900 text-white h-full shadow-lg flex flex-col">
-    <div class="px-6 py-5 border-b border-white/20">
+  <aside class="w-52 bg-white text-gray-900 h-full shadow-lg flex flex-col">
+    <div class="px-6 py-5 border-b border-gray-400">
       <img :src="Logo.img" :alt="Logo.alt" />
     </div>
     <ul class="flex-1 p-4 space-y-3">

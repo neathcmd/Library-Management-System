@@ -9,10 +9,10 @@ const Title = "Library Management System";
 </script>
 
 <template>
-  <header class="w-full bg-gray-900 px-6 py-6 shadow">
+  <header class="w-full bg-white px-6 py-6 shadow">
     <div class="flex items-center justify-between">
       <!-- Title -->
-      <h1 class="text-white text-2xl font-siembold">
+      <h1 class="text-gray-900 text-2xl font-siembold">
         {{ Title }}
       </h1>
 
@@ -23,7 +23,7 @@ const Title = "Library Management System";
           :alt="AdminProfile.alt"
           class="w-10 h-10 rounded-full object-cover"
         />
-        <p class="text-white font-medium">{{ AdminProfile.name }}</p>
+        <p class="text-gray-900 font-medium">{{ AdminProfile.name }}</p>
       </div>
     </div>
   </header>

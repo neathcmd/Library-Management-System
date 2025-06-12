@@ -17,7 +17,7 @@ import Header from "./components/Header.vue";
       </header>
 
       <!-- Scrollable Main Content -->
-      <main class="flex-1 overflow-auto bg-gray-800 p-4">
+      <main class="flex-1 overflow-auto bg-gray-200 p-4">
         <router-view />
       </main>
     </div>

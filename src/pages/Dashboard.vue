@@ -1,13 +1,116 @@
+<script setup>
+import { ref, computed } from "vue";
+
+const students = ref([
+  {
+    id: 1,
+    name: "Alice Johnson",
+    book: "To Kill a Mockingbird",
+    borrowDate: "2024-06-01",
+    category: "Fiction",
+  },
+  {
+    id: 2,
+    name: "Bob Smith",
+    book: "The Great Gatsby",
+    borrowDate: "2024-06-03",
+    category: "Fiction",
+  },
+  {
+    id: 3,
+    name: "Carol Davis",
+    book: "A Brief History of Time",
+    borrowDate: "2024-06-05",
+    category: "Science",
+  },
+  {
+    id: 4,
+    name: "David Wilson",
+    book: "1984",
+    borrowDate: "2024-06-07",
+    category: "Fiction",
+  },
+  {
+    id: 5,
+    name: "Eva Brown",
+    book: "The Origin of Species",
+    borrowDate: "2024-06-08",
+    category: "Science",
+  },
+  {
+    id: 6,
+    name: "Frank Miller",
+    book: "World War II",
+    borrowDate: "2024-06-09",
+    category: "History",
+  },
+  {
+    id: 7,
+    name: "Grace Lee",
+    book: "Pride and Prejudice",
+    borrowDate: "2024-06-10",
+    category: "Fiction",
+  },
+  {
+    id: 8,
+    name: "Henry Taylor",
+    book: "The Art of War",
+    borrowDate: "2024-06-11",
+    category: "Philosophy",
+  },
+  {
+    id: 9,
+    name: "Harry Porter",
+    book: "The lord of the Rings",
+    borrowDate: "2024-06-13",
+    category: "Philosophy",
+  },
+  {
+    id: 10,
+    name: "Kamado Tanjirou",
+    book: "Demon Slayer",
+    borrowDate: "2024-06-12",
+    category: "Philosophy",
+  },
+]);
+//  count total students
+const totalStudents = computed(() => students.value.length);
+
+const bookCategories = ref([
+  {
+    category: "Fiction",
+    count: 30,
+  },
+  {
+    category: "noval",
+    count: 52,
+  },
+  {
+    category: "khmer",
+    count: 90,
+  },
+  {
+    category: "english",
+    count: 45,
+  },
+]);
+
+// Count total books in all categories
+const totalBooks = computed(() =>
+  bookCategories.value.reduce((sum, books) => sum + books.count, 0)
+);
+</script>
+
 <template>
   <div class="w-full min-h-screen">
     <div class="flex items-start justify-between space-x-6">
       <!-- total books count -->
       <div
-        class="p-6 bg-gray-900 text-white flex items-center justify-between flex-grow rounded-lg"
+        class="p-6 bg-white text-gray-900 flex items-center justify-between flex-grow rounded-lg"
       >
         <div>
-          <h1 class="text-xl font-semibold text-gray-300">Total Books</h1>
-          <p class="text-3xl font-bold mt-1 text-white">120</p>
+          <h1 class="text-xl font-semibold">Total Books</h1>
+          <p class="text-3xl font-bold mt-1">{{ totalBooks }}</p>
         </div>
         <div
           class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
@@ -26,11 +129,11 @@
       </div>
       <!-- total students -->
       <div
-        class="p-6 bg-gray-900 text-white flex items-center justify-between flex-grow rounded-lg"
+        class="p-6 bg-white text-gray-900 flex items-center justify-between flex-grow rounded-lg"
       >
         <div>
-          <h1 class="text-xl font-semibold text-gray-300">Total Students</h1>
-          <p class="text-3xl font-bold mt-1 text-white">120</p>
+          <h1 class="text-xl font-semibold">Total Students</h1>
+          <p class="text-3xl font-bold mt-1">{{ totalStudents }}</p>
         </div>
         <div
           class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
@@ -50,5 +153,10 @@
     </div>
 
     <!-- Book category -->
+    <div class="">
+      <div>
+        <h1>Book by Category</h1>
+      </div>
+    </div>
   </div>
 </template>
