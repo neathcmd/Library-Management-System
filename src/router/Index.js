@@ -3,7 +3,7 @@ import Dashboard from "../pages/Dashboard.vue";
 import Books from "../pages/book/Books.vue";
 import Students from "../pages/student/Students.vue";
 import Borrow from "../pages/borrow/Borrow.vue";
-
+import login from "../pages/login.vue";
 const routes = [
   {
     path: "/",
@@ -20,6 +20,10 @@ const routes = [
   {
     path: "/borrow",
     component: Borrow,
+  },
+  {
+    path: "/login",
+    component: login,
   },
 ];
 
