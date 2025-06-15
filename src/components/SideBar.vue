@@ -1,82 +1,139 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import PSELOGO from "../assets/PSELOGO.png";
 import { useRoute } from "vue-router";
 
-const navBarItems = ref([
+// Navigation items with Font Awesome icons
+interface NavItem {
+  label: string;
+  href: string;
+  icon: string; // Font Awesome class name
+  description?: string;
+}
+
+const navBarItems = ref<NavItem[]>([
   {
     label: "Dashboard",
     href: "/",
-    viewBox: "0 0 24 24",
-    xmlns: "http://www.w3.org/2000/svg",
-    icon: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2V7zm16 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v2m16 0l-8.5 6a1 1 0 01-1 0L3 7",
+    icon: "fa-solid fa-chart-column ",
+    description: "View system overview and statistics",
   },
   {
     label: "Borrow",
     href: "/borrow",
-    viewBox: "0 0 24 24",
-    xmlns: "http://www.w3.org/2000/svg",
-    icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
+    icon: "fa-solid fa-book-open-reader",
+    description: "Manage book borrowing",
   },
   {
     label: "Books",
     href: "/books",
-    viewBox: "0 0 24 24",
-    xmlns: "http://www.w3.org/2000/svg",
-    icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
+    icon: "fa-solid fa-book",
+    description: "Browse and manage books",
   },
   {
     label: "Students",
     href: "/students",
-    viewBox: "0 0 24 24",
-    xmlns: "http://www.w3.org/2000/svg",
-    icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+    icon: "fa-solid fa-user-graduate",
+    description: "Manage student records",
   },
 ]);
 
-const Logo = {
-  img: PSELOGO,
-  alt: "This is the logo",
-};
+// Logo configuration
+const logoConfig = {
+  src: PSELOGO,
+  alt: "PSE Logo - Library Management System",
+  title: "PSE Library System",
+} as const;
 
 const route = useRoute();
 
-const isActive = (href: string) => {
-  return route.path === href;
+// Computed property for better performance
+const isActive = computed(() => (href: string) => route.path === href);
+
+// Enhanced link classes with better visual feedback using only Tailwind
+const getLinkClasses = (href: string) => {
+  const baseClasses =
+    "group flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50";
+
+  if (isActive.value(href)) {
+    return `${baseClasses} bg-blue-50 text-blue-700 border-l-4 border-blue-600 font-semibold shadow-sm`;
+  }
+
+  return `${baseClasses} text-gray-700 hover:bg-gray-100 hover:text-gray-900 hover:shadow-sm`;
+};
+
+const getIconClasses = (href: string) => {
+  const baseClasses = "w-5 h-5 text-center transition-colors duration-200";
+
+  if (isActive.value(href)) {
+    return `${baseClasses} text-blue-600`;
+  }
+
+  return `${baseClasses} text-gray-500 group-hover:text-gray-700`;
 };
 </script>
 
 <template>
-  <!-- Sidebar -->
-  <aside class="w-52 bg-white text-gray-900 h-full shadow-lg flex flex-col">
-    <div class="px-6 py-5 border-b border-gray-400">
-      <img :src="Logo.img" :alt="Logo.alt" />
-    </div>
-    <ul class="flex-1 p-4 space-y-3">
-      <li v-for="(item, index) in navBarItems" :key="index">
-        <router-link
-          :to="item.href"
-          :class="[
-            'px-3 py-2 rounded transition-colors block flex items-center gap-3',
-            isActive(item.href) ? 'bg-gray-200' : 'hover:bg-gray-200',
-          ]"
+  <aside
+    class="w-64 bg-white text-gray-900 h-full shadow-lg flex flex-col border-r border-gray-200"
+    role="navigation"
+    aria-label="Main navigation"
+  >
+    <!-- Logo Section -->
+    <header class="px-6 py-6 border-b border-gray-200 bg-gray-50">
+      <div class="flex items-center justify-center">
+        <img
+          :src="logoConfig.src"
+          :alt="logoConfig.alt"
+          :title="logoConfig.title"
+          class="max-h-12 w-auto object-contain"
+          loading="lazy"
+        />
+      </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 px-4 py-6" aria-label="Sidebar navigation">
+      <ul class="space-y-1" role="list">
+        <li
+          v-for="(item, index) in navBarItems"
+          :key="`nav-${item.href}-${index}`"
+          role="listitem"
         >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
+          <router-link
+            :to="item.href"
+            :class="getLinkClasses(item.href)"
+            :aria-current="isActive(item.href) ? 'page' : undefined"
+            :title="item.description"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              :d="item.icon"
-            />
-          </svg>
-          {{ item.label }}
-        </router-link>
-      </li>
-    </ul>
+            <!-- Font Awesome Icon -->
+            <i
+              :class="[item.icon, getIconClasses(item.href)]"
+              aria-hidden="true"
+            ></i>
+
+            <!-- Label -->
+            <span class="font-medium tracking-wide">{{ item.label }}</span>
+
+            <!-- Active indicator -->
+            <div v-if="isActive(item.href)" class="ml-auto flex items-center">
+              <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            </div>
+          </router-link>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Theme button here -->
+    <div class="px-4 py-4 border-t border-gray-200">
+      <div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50">
+        <p>Theme button here</p>
+      </div>
+    </div>
   </aside>
 </template>
+
+<style>
+/* Import Font Awesome - Add this to your main CSS file or index.html */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
+</style>
