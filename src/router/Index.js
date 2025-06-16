@@ -6,7 +6,7 @@ import Borrow from "../pages/borrow/Borrow.vue";
 import login from "../pages/login.vue";
 const routes = [
   {
-    path: "/",
+    path: "/dashboard",
     component: Dashboard,
   },
   {
@@ -22,11 +22,27 @@ const routes = [
     component: Borrow,
   },
   {
-    path: "/login",
+    path: "/",
     component: login,
   },
 ];
 
+// const routes = [
+//   {
+//     path: "/",
+//     component: MainLayout,
+//     children: [
+//       { path: "", component: Dashboard },
+//       { path: "books", component: Books },
+//       { path: "students", component: Students },
+//       { path: "borrow", component: Borrow },
+//     ],
+//   },
+//   {
+//     path: "/login",
+//     component: login,
+//   },
+// ];
 const router = createRouter({
   history: createWebHistory(),
   routes,

@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import PSELOGO from "../assets/PSELOGO.png";
 import { useRoute } from "vue-router";
-
 const navBarItems = ref([
   { label: "Dashboard", href: "/" },
   { label: "Borrow", href: "/borrow" },
