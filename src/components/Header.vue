@@ -9,7 +9,7 @@ const Title = "Library Management System";
 </script>
 
 <template>
-  <header class="w-full bg-white px-6 py-6 shadow">
+  <header class="w-full bg-white px-6 py-6 shadow-xl border-b border-gray-400">
     <div class="flex items-center justify-between">
       <!-- Title -->
       <h1 class="text-gray-900 text-2xl font-siembold">

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import BarChart from "../../components/BarChart.vue";
 
 const students = ref([
   {
@@ -78,19 +79,35 @@ const totalStudents = computed(() => students.value.length);
 
 const bookCategories = ref([
   {
-    category: "Fiction",
+    category: "Youth Novel",
     count: 30,
   },
   {
-    category: "noval",
+    category: "Educational",
     count: 52,
   },
   {
-    category: "khmer",
+    category: "Theology",
     count: 90,
   },
   {
-    category: "english",
+    category: "Development ",
+    count: 45,
+  },
+  {
+    category: "Science ",
+    count: 45,
+  },
+  {
+    category: "History ",
+    count: 45,
+  },
+  {
+    category: "Song Book ",
+    count: 45,
+  },
+  {
+    category: "Technology ",
     count: 45,
   },
 ]);
@@ -152,10 +169,98 @@ const totalBooks = computed(() =>
       </div>
     </div>
 
-    <!-- Book category -->
-    <div class="">
-      <div>
-        <h1>Book by Category</h1>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+      <!-- BarChart section - left side, wider than student list -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl p-6 shadow mt-6">
+          <h1 class="text-xl font-semibold text-gray-900 mb-6">
+            Chart Analytics
+          </h1>
+          <div class="w-full">
+            <BarChart />
+          </div>
+        </div>
+      </div>
+
+      <!-- Student borrowing section - right side -->
+      <div class="lg:col-span-1">
+        <div class="border border-gray-300 rounded-lg p-6 mt-6 bg-white">
+          <div>
+            <h1 class="text-xl font-semibold text-gray-900 mb-6">
+              Book Borrow by Students
+            </h1>
+
+            <div class="space-y-3 max-h-[30rem] overflow-y-auto">
+              <div
+                v-for="student in students"
+                :key="student.id"
+                class="bg-gray-200 rounded-lg p-4 hover:border hover:border-gray-700 transition-colors"
+              >
+                <div class="flex flex-col space-y-2">
+                  <div class="font-semibold text-gray-900 text-sm">
+                    {{ student.name }}
+                  </div>
+                  <div class="text-gray-800 text-xs">
+                    {{ student.book }}
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span
+                      class="text-xs bg-purple-500/20 text-gray-900 px-2 py-1 rounded"
+                    >
+                      {{ student.category }}
+                    </span>
+                    <span class="text-xs text-gray-800">
+                      {{ student.borrowDate }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Book category - full width at bottom -->
+      <div class="lg:col-span-3">
+        <div class="bg-white rounded-xl p-6 shadow">
+          <h1 class="text-xl font-semibold text-gray-900 mb-6">
+            Books by Category
+          </h1>
+          <div class="space-y-4">
+            <div
+              v-for="(category, index) in bookCategories"
+              :key="index"
+              class="flex items-center space-x-4"
+            >
+              <!-- Category name -->
+              <div class="w-24 text-sm text-gray-800 font-medium truncate">
+                {{ category.category }}
+              </div>
+
+              <!-- Progress bar -->
+              <div
+                class="flex-1 bg-gray-200 h-6 relative overflow-hidden shadow-lg"
+              >
+                <!-- Filter ProgressBar -->
+                <div
+                  class="bg-blue-500 h-full transition-all duration-1000 ease-out"
+                  :style="{
+                    width:
+                      totalBooks > 0
+                        ? (category.count / totalBooks) * 100 + '%'
+                        : '0%',
+                  }"
+                ></div>
+
+                <div
+                  class="absolute inset-0 flex items-center justify-center text-sm font-semibold text-gray-900 drop-shadow-sm"
+                >
+                  {{ category.count }} books
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
