@@ -1,5 +1,5 @@
 <script>
-import SX from "../../assets/library.png";
+import pse from "../../assets/PSELOGO.png";
 export default {
   data() {
     return {
@@ -23,11 +23,11 @@ export default {
       <div
         class="w-1/2 bg-blue-100 p-6 hidden md:flex flex-col justify-center items-center rounded-l-xl"
       >
-        <img :src="SX" alt="Illustration" class="w-40 mb-4" />
+        <img :src="pse" alt="" class="w-40 mb-4" />
       </div>
       <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
         <div class="flex justify-center mb-6">
-          <img src="" alt="Book Icon" class="w-14" />
+          <img src="" alt="" class="w-14" />
         </div>
         <h2 class="text-2xl font-bold text-center text-gray-800">
           Library Management System
