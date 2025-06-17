@@ -1,5 +1,4 @@
 <script>
-import pse from "../../assets/PSELOGO.png";
 export default {
   data() {
     return {
@@ -16,22 +15,21 @@ export default {
 };
 </script>
 <template>
-  <div
-    class="flex w-full h-screen items-center justify-center bg-gradient-to-r from-cyan-400 to-blue-500 p-4"
-  >
-    <div class="bg-white rounded-xl shadow-lg flex w-full max-w-4xl">
+  <div class="flex w-full h-screen items-center justify-center bg-blue-200">
+    <div class="rounded-xl shadow-lg flex w-full h-screen">
       <div
-        class="w-1/2 bg-blue-100 p-6 hidden md:flex flex-col justify-center items-center rounded-l-xl"
+        class="w-1/2 p-6 hidden md:flex flex-col justify-center items-center rounded-l-xl"
       >
-        <img :src="pse" alt="" class="w-40 mb-4" />
+        <img src="/src/assets/library.png" alt="" class="w-100 mt-30" />
       </div>
       <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
-        <div class="flex justify-center mb-6">
-          <img src="" alt="" class="w-14" />
+        <div class="flex mb-6">
+          <img src="/src//assets/boy.png" alt="" class="w-40" />
+          <div class="font-bold text-gray-800 justify-center items-center">
+            <h2 class="text-4xl">LIBRARY</h2>
+            <p class="mt-2 text-2xl">Management System</p>
+          </div>
         </div>
-        <h2 class="text-2xl font-bold text-center text-gray-800">
-          Library Management System
-        </h2>
         <form @submit.prevent="login" class="mt-6 space-y-4">
           <div>
             <label class="block mb-1 text-sm font-medium text-gray-700"
@@ -59,7 +57,7 @@ export default {
           </div>
           <button
             type="submit"
-            class="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            class="w-50 md:ml-97 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
             Login
           </button>
