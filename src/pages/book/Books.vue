@@ -1,10 +1,12 @@
 <template>
   <div>
-    <h1 style="text-align:center; margin-bottom: 24px;">Library Management System</h1>
+    <h1 style="text-align: center; margin-bottom: 24px">
+      Library Management System
+    </h1>
     <table class="books-table">
       <thead>
         <tr>
-          <th>Books<br>ID</th>
+          <th>Books<br />ID</th>
           <th>Title</th>
           <th>Author</th>
           <th>Available</th>
@@ -41,7 +43,8 @@
   margin: 0 auto;
   font-size: 1rem;
 }
-.books-table th, .books-table td {
+.books-table th,
+.books-table td {
   border: 2px solid #1a2341;
   padding: 12px 8px;
   text-align: center;
