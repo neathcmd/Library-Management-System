@@ -61,7 +61,7 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="w-full h-[30rem]">
+  <div class="w-full h-[25rem]">
     <!-- more space -->
     <Bar :data="chartData" :options="chartOptions" />
   </div>
