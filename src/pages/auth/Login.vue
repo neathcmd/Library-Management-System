@@ -28,20 +28,22 @@ const handleSubmit = () => {
 
       <form @submit.prevent="handleSubmit" novalidate>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Email address</label
+          <label for="email" class="block text-sm font-medium text-gray-700"
+            >Email Address</label
           >
           <input
             type="email"
+            id="email"
             v-model="email"
             :class="[
               'w-full border rounded px-3 py-2 focus:outline-none',
               passwordError ? 'border-red-500' : 'border-blue-400',
             ]"
+            placeholder="you@example.com"
             required
           />
           <p v-if="passwordError" class="text-sm text-red-600 mt-1">
-            ⚠️ Please enter your email correctly.
+            ⚠️ This field is required
           </p>
         </div>
 
@@ -52,6 +54,7 @@ const handleSubmit = () => {
           <input
             :type="showPassword ? 'text' : 'password'"
             v-model="password"
+            placeholder="password..."
             :class="[
               'w-full border rounded px-3 py-2 focus:outline-none',
               passwordError ? 'border-red-500' : 'border-blue-400',
