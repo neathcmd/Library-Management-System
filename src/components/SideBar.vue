@@ -75,12 +75,12 @@ const getIconClasses = (href: string) => {
 
 <template>
   <aside
-    class="w-64 bg-white text-gray-900 h-full shadow-lg flex flex-col border-r border-gray-200"
+    class="w-64 bg-white text-gray-900 h-full shadow-lg flex flex-col border-r border-gray-400"
     role="navigation"
     aria-label="Main navigation"
   >
     <!-- Logo Section -->
-    <header class="px-6 py-6 border-b border-gray-200 bg-gray-50">
+    <header class="px-6 py-6 border-b border-gray-400">
       <div class="flex items-center justify-center">
         <img
           :src="logoConfig.src"
