@@ -47,6 +47,8 @@ const chartData = {
   ],
 };
 
+const getCurrentYear = new Date().getFullYear();
+
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -54,7 +56,7 @@ const chartOptions = {
     legend: { display: true },
     title: {
       display: true,
-      text: "Monthly Borrowing Trends - 2025",
+      text: "Monthly Borrowing Trends -" + getCurrentYear,
     },
   },
 };
