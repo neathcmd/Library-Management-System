@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script setup>
 import { useRoute } from 'vue-router'
 import SideBar from "./components/SideBar.vue";
@@ -26,3 +27,8 @@ const route = useRoute()
     </div>
   </div>
 </template>
+=======
+<template>
+  <router-view />
+</template>
+>>>>>>> fad73a5b4e9e3f0316a3fdd37834f5a6f5f821f6

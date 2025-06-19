@@ -4,6 +4,7 @@
     <div class="flex-1">
       <!-- Header -->
       <div class="flex items-center justify-between mb-4">
+        <h1 class="text-2xl font-bold text-gray-900">Library Management System</h1>
         <div class="flex items-center gap-4">
           <input
             v-model="search"

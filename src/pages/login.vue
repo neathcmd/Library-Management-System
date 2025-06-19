@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <template>
   <div class="login-container">
     <div class="login-box">
@@ -93,3 +94,6 @@ button:hover {
   text-align: center;
 }
 </style>
+=======
+
+>>>>>>> fad73a5b4e9e3f0316a3fdd37834f5a6f5f821f6
