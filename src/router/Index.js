@@ -57,17 +57,13 @@ const router = createRouter({
   routes,
 });
 
-<<<<<<< HEAD
-export default router;
-=======
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem("token");
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: "Login" });
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   const isAuthenticated = !!localStorage.getItem("token");
+//   if (to.meta.requiresAuth && !isAuthenticated) {
+//     next({ name: "Login" });
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;
->>>>>>> fad73a5b4e9e3f0316a3fdd37834f5a6f5f821f6
