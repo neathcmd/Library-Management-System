@@ -15,24 +15,13 @@ export default {
 };
 </script>
 <template>
-  <div
-    class="flex w-full h-screen items-center justify-center bg-blue-400 shadow-xl"
-  >
+  <div class="flex w-full h-screen items-center justify-center shadow-xl">
     <div class="rounded-xl shadow-lg flex w-full h-screen">
-      <div
-        class="w-1/2 p-6 md:flex flex-col justify-center items-center rounded-l-xl"
-      >
-        <img
-          src="/src/assets/library.png"
-          alt=""
-          class="w-100 mt-30 shadow-xl"
-        />
-      </div>
       <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
         <div class="flex mb-6">
           <img src="/src//assets/boy.png" alt="" class="w-40" />
           <div class="font-bold text-gray-800 justify-center items-center">
-            <h2 class="text-4xl ml-20">LIBRARY</h2>
+            <h2 class="text-4xl ml-18">LIBRARY</h2>
             <p class="mt-2 text-2xl ml-20">Management System</p>
           </div>
         </div>
@@ -68,6 +57,15 @@ export default {
             Login
           </button>
         </form>
+      </div>
+      <div
+        class="w-1/2 p-6 md:flex flex-col justify-center items-center rounded-l-xl"
+      >
+        <img
+          src="/src/assets/library.png"
+          alt=""
+          class="w-100 mt-30 shadow-xl"
+        />
       </div>
     </div>
   </div>
