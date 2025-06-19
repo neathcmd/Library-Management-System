@@ -141,7 +141,7 @@ const totalCategory = computed(() => bookCategories.value.length);
       </router-link>
 
       <!-- Total Category -->
-      <router-link to="#categories" class="block">
+      <router-link to="/books" class="block">
         <div
           class="p-6 bg-white text-gray-900 flex items-center justify-between rounded-lg hover:shadow-md transition"
         >
@@ -175,12 +175,12 @@ const totalCategory = computed(() => bookCategories.value.length);
       </router-link>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+    <div class="grid grid-cols-3 gap-6 w-full">
       <!-- BarChart section -->
       <div class="lg:col-span-2">
         <div class="bg-white rounded-xl p-6 shadow mt-6">
           <h1 class="text-xl font-semibold text-gray-900 mb-6">
-            Chart Analytics
+            Books Borrow Data Analytics
           </h1>
           <div class="w-full">
             <BarChart />
@@ -191,34 +191,66 @@ const totalCategory = computed(() => bookCategories.value.length);
       <!-- Student borrowing section  -->
       <div class="lg:col-span-1">
         <div class="border border-gray-300 rounded-lg p-6 mt-6 bg-white">
-          <div>
-            <h1 class="text-xl font-semibold text-gray-900 mb-6">
-              Book Borrow by Students
-            </h1>
-
-            <div class="space-y-3 max-h-[25rem] overflow-y-auto">
+          <!-- header -->
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-xl font-semibold text-gray-900">
+                Current Borrowers
+              </h1>
+            </div>
+            <router-link to="/borrow" class="group">
               <div
-                v-for="student in students"
-                :key="student.id"
-                class="bg-gray-200 rounded-lg p-4 hover:border hover:border-gray-700 transition-colors"
+                class="flex items-center space-x-2 px-3 md:px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
               >
-                <div class="flex flex-col space-y-2">
-                  <div class="font-semibold text-gray-900 text-sm">
-                    {{ student.name }}
-                  </div>
-                  <div class="text-gray-800 text-xs">
-                    {{ student.book }}
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <span
-                      class="text-xs bg-purple-500/20 text-gray-900 px-2 py-1 rounded"
-                    >
-                      {{ student.category }}
-                    </span>
-                    <span class="text-xs text-gray-800">
-                      {{ student.borrowDate }}
-                    </span>
-                  </div>
+                <span
+                  class="text-xs md:text-sm font-medium text-blue-600 group-hover:text-blue-700"
+                >
+                  See all
+                </span>
+                <i
+                  class="fa-solid fa-arrow-right text-xs text-blue-600 group-hover:text-blue-700 group-hover:translate-x-1 transition-all"
+                ></i>
+              </div>
+            </router-link>
+          </div>
+
+          <!-- Search Input Field-->
+          <div class="py-2">
+            <div
+              class="flex items-center gap-3 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500"
+            >
+              <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
+              <input
+                type="text"
+                placeholder="Search"
+                class="w-full bg-transparent focus:outline-none text-sm text-gray-700 placeholder-gray-400"
+                aria-label="Search"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-3 max-h-[25rem] overflow-y-auto">
+            <div
+              v-for="student in students"
+              :key="student.id"
+              class="bg-gray-200 rounded-lg p-4 hover:border hover:border-gray-700 transition-colors"
+            >
+              <div class="flex flex-col space-y-2">
+                <div class="font-semibold text-gray-900 text-sm">
+                  {{ student.name }}
+                </div>
+                <div class="text-gray-800 text-xs">
+                  {{ student.book }}
+                </div>
+                <div class="flex justify-between items-center">
+                  <span
+                    class="text-xs bg-purple-500/20 text-gray-900 px-2 py-1 rounded"
+                  >
+                    {{ student.category }}
+                  </span>
+                  <span class="text-xs text-gray-800">
+                    {{ student.borrowDate }}
+                  </span>
                 </div>
               </div>
             </div>
