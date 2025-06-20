@@ -9,20 +9,20 @@ import Students from "../pages/student/Students.vue";
 import Borrow from "../pages/borrow/Borrow.vue";
 
 // Auth Page
-// import Login from "../pages/auth/Login.vue";
+import Login from "../pages/auth/Login.vue";
 
 const routes = [
-  // {
-  //   path: "/login",
-  //   component: AuthLayout,
-  //   children: [
-  //     {
-  //       path: "",
-  //       name: "Login",
-  //       component: Login,
-  //     },
-  //   ],
-  // },
+  {
+    path: "/login",
+    component: AuthLayout,
+    children: [
+      {
+        path: "",
+        name: "Login",
+        component: Login,
+      },
+    ],
+  },
   {
     path: "/",
     component: DashboardLayout,

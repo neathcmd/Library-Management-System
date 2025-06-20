@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 const showDropdown = ref(false);
 const router = useRouter();
 
-const Title = "Library Management System";
+const Title = "PSE Library Management System";
 
 const AdminProfile = reactive({
   name: "",
