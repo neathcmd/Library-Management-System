@@ -81,15 +81,17 @@ const getIconClasses = (href: string) => {
   >
     <!-- Logo Section -->
     <header class="px-6 py-6 border-b border-gray-400">
-      <div class="flex items-center justify-center">
-        <img
-          :src="logoConfig.src"
-          :alt="logoConfig.alt"
-          :title="logoConfig.title"
-          class="max-h-12 w-auto object-contain"
-          loading="lazy"
-        />
-      </div>
+      <router-link to="/">
+        <div class="flex items-center justify-center">
+          <img
+            :src="logoConfig.src"
+            :alt="logoConfig.alt"
+            :title="logoConfig.title"
+            class="max-h-12 w-auto object-contain"
+            loading="lazy"
+          />
+        </div>
+      </router-link>
     </header>
 
     <!-- Navigation Menu -->
