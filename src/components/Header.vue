@@ -8,6 +8,8 @@ const router = useRouter();
 
 const Title = "PSE Library Management System";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 const AdminProfile = reactive({
   name: "",
   alt: "admin profile info",
@@ -17,7 +19,7 @@ const AdminProfile = reactive({
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get("http://localhost:3000/api/example");
+    const { data } = await axios.get(`${BASE_URL}/api/authors`);
     Object.assign(AdminProfile, {
       name: data.name,
       alt: data.alt,

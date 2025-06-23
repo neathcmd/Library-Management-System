@@ -3,19 +3,18 @@ import { ref, computed, onMounted } from "vue";
 import BarChart from "../../components/BarChart.vue";
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+console.log("Api base url", BASE_URL);
 
 const books = ref([]);
 const categories = ref([]);
 const students = ref([]);
-const borrowers = ref([]);
 
 onMounted(async () => {
   const [bookres, categoriesres, studentres] = await Promise.all([
     axios.get(`${BASE_URL}/api/books`),
     axios.get(`${BASE_URL}/api/categories`),
     axios.get(`${BASE_URL}/api/students`),
-    axios.get(`${BASE_URL}/api/borrows`),
   ]);
 
   books.value = bookRes.data;
@@ -27,6 +26,21 @@ onMounted(async () => {
 const totalBooks = computed(() => books.value.length);
 const totalCategory = computed(() => categories.value.length);
 const totalStudents = computed(() => students.value.length);
+
+onMounted(() => {
+  const borrowData = async () => {
+    try {
+      const borrowRes = await axios.get(`${BASE_URL}/api/borrows`);
+      console.log(borrowRes.data);
+      return borrowRes.data;
+    } catch (error) {
+      console.log("Can't fetch data", error);
+      return null;
+    }
+  };
+
+  borrowData();
+});
 </script>
 
 <template>
