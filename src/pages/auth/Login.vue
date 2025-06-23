@@ -44,7 +44,7 @@ const handleSubmit = async () => {
   <div
     class="flex flex-col md:flex-row w-full h-screen items-center justify-center bg-amber-50"
   >
-    <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
+    <div class="w-full md:w-1/2 p-8 flex flex-col justify-center shadow-2xl">
       <div class="flex items-center mb-6 space-x-4">
         <img src="/src/assets/boy.png" alt="Boy" class="w-24 md:w-40" />
         <div class="font-bold text-gray-800">
