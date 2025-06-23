@@ -1,123 +1,32 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import BarChart from "../../components/BarChart.vue";
+import axios from "axios";
 
-const students = ref([
-  {
-    id: 1,
-    name: "Alice Johnson",
-    book: "To Kill a Mockingbird",
-    borrowDate: "2024-06-01",
-    category: "Fiction",
-  },
-  {
-    id: 2,
-    name: "Bob Smith",
-    book: "The Great Gatsby",
-    borrowDate: "2024-06-03",
-    category: "Fiction",
-  },
-  {
-    id: 3,
-    name: "Carol Davis",
-    book: "A Brief History of Time",
-    borrowDate: "2024-06-05",
-    category: "Science",
-  },
-  {
-    id: 4,
-    name: "David Wilson",
-    book: "1984",
-    borrowDate: "2024-06-07",
-    category: "Fiction",
-  },
-  {
-    id: 5,
-    name: "Eva Brown",
-    book: "The Origin of Species",
-    borrowDate: "2024-06-08",
-    category: "Science",
-  },
-  {
-    id: 6,
-    name: "Frank Miller",
-    book: "World War II",
-    borrowDate: "2024-06-09",
-    category: "History",
-  },
-  {
-    id: 7,
-    name: "Grace Lee",
-    book: "Pride and Prejudice",
-    borrowDate: "2024-06-10",
-    category: "Fiction",
-  },
-  {
-    id: 8,
-    name: "Henry Taylor",
-    book: "The Art of War",
-    borrowDate: "2024-06-11",
-    category: "Philosophy",
-  },
-  {
-    id: 9,
-    name: "Harry Porter",
-    book: "The lord of the Rings",
-    borrowDate: "2024-06-13",
-    category: "Philosophy",
-  },
-  {
-    id: 10,
-    name: "Kamado Tanjirou",
-    book: "Demon Slayer",
-    borrowDate: "2024-06-12",
-    category: "Philosophy",
-  },
-]);
+const BASE_URL = "http://localhost:3000";
 
-const bookCategories = ref([
-  {
-    category: "Youth Novel",
-    count: 30,
-  },
-  {
-    category: "Educational",
-    count: 52,
-  },
-  {
-    category: "Theology",
-    count: 90,
-  },
-  {
-    category: "Development",
-    count: 45,
-  },
-  {
-    category: "Science ",
-    count: 45,
-  },
-  {
-    category: "History ",
-    count: 45,
-  },
-  {
-    category: "Song Book ",
-    count: 45,
-  },
-  {
-    category: "Technology ",
-    count: 45,
-  },
-]);
+const books = ref([]);
+const categories = ref([]);
+const students = ref([]);
+const borrowers = ref([]);
 
-// Count total books in all categories
-const totalBooks = computed(() =>
-  bookCategories.value.reduce((sum, books) => sum + books.count, 0)
-);
-//  count total students
+onMounted(async () => {
+  const [bookres, categoriesres, studentres] = await Promise.all([
+    axios.get(`${BASE_URL}/api/books`),
+    axios.get(`${BASE_URL}/api/categories`),
+    axios.get(`${BASE_URL}/api/students`),
+    axios.get(`${BASE_URL}/api/borrows`),
+  ]);
+
+  books.value = bookRes.data;
+  bookCategories.value = categoryRes.data;
+  students.value = studentRes.data;
+});
+
+// count funtion
+const totalBooks = computed(() => books.value.length);
+const totalCategory = computed(() => categories.value.length);
 const totalStudents = computed(() => students.value.length);
-// count total category
-const totalCategory = computed(() => bookCategories.value.length);
 </script>
 
 <template>
