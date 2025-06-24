@@ -1,145 +1,91 @@
 <template>
-  <div class="flex gap-6">
-    <!-- Main Content -->
-    <div class="flex-1">
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-4">
-        <h1 class="text-2xl font-bold text-gray-900">Library Management System</h1>
-        <div class="flex items-center gap-4">
-          <input
-            v-model="search"
-            type="text"
-            placeholder="Search books, authors, or categories..."
-            class="w-96 px-4 py-2 border border-gray-300 rounded focus:outline-none"
-          />
-          <button class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 font-semibold">
-            + Add New Book
-          </button>
-        </div>
-      </div>
-
-      <!-- Books and Filter -->
-      <div class="bg-white rounded shadow p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <span class="text-xl font-bold">Books</span>
-            <span class="ml-2 text-gray-500">({{ filteredBooks.length }} books)</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-semibold text-gray-700">Sort by Category:</span>
-            <select v-model="selectedCategory" class="border px-3 py-2 rounded">
-              <option value="">All Categories</option>
-              <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-            </select>
-          </div>
-        </div>
-        <!-- Book Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div
-            v-for="book in filteredBooks"
-            :key="book.id"
-            class="bg-gray-100 rounded shadow p-4 flex flex-col"
-          >
-            <div class="flex-1 flex flex-col justify-between">
-              <div>
-                <div class="h-40 bg-gray-300 rounded mb-4"></div>
-                <div class="font-bold text-lg mb-1">{{ book.title }}</div>
-                <div class="text-gray-600 mb-2">{{ book.author }}</div>
-                <div class="text-sm text-gray-500 mb-2">Available: {{ book.available }}</div>
-                <div class="text-sm text-gray-500 mb-2">Borrowed: {{ book.borrow }}</div>
-              </div>
-              <button
-                :disabled="book.available === 0"
-                @click="borrowBook(book)"
-                class="mt-4 px-4 py-2 rounded bg-blue-900 text-white hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                Borrow
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="p-8">
+    <h1 class="text-2xl font-bold mb-4">Books</h1>
+    <button @click="showAddBook = true" class="mb-4 px-4 py-2 bg-blue-600 text-white rounded">+ Add Book</button>
+    <div v-if="showAddBook" class="mb-4 bg-gray-100 p-4 rounded">
+      <input v-model="newBook.title" placeholder="Title" class="mb-2 px-2 py-1 border rounded w-full" />
+      <input v-model="newBook.description" placeholder="Description" class="mb-2 px-2 py-1 border rounded w-full" />
+      <input v-model.number="newBook.author_id" placeholder="Author ID" class="mb-2 px-2 py-1 border rounded w-full" />
+      <input v-model.number="newBook.category_id" placeholder="Category ID" class="mb-2 px-2 py-1 border rounded w-full" />
+      <input v-model.number="newBook.quantity" placeholder="Quantity" class="mb-2 px-2 py-1 border rounded w-full" />
+      <input v-model.number="newBook.created_by" placeholder="Created By" class="mb-2 px-2 py-1 border rounded w-full" />
+      <div class="flex gap-2">
+        <button @click="showAddBook = false" class="px-4 py-1 bg-gray-300 rounded">Cancel</button>
+        <button @click="addBook" class="px-4 py-1 bg-blue-600 text-white rounded">Add</button>
       </div>
     </div>
-
-    <!-- Sidebar -->
-    <aside class="w-80">
-      <div class="bg-white rounded shadow p-6">
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-xl font-bold">Categories</span>
-          <span class="text-gray-500">{{ totalBooks }} total</span>
-        </div>
-        <div v-for="cat in categoryStats" :key="cat.name" class="mb-4">
-          <div class="flex justify-between mb-1">
-            <span class="text-gray-700">{{ cat.name }}</span>
-            <span class="text-gray-500">{{ cat.count }}</span>
-          </div>
-          <div class="w-full bg-gray-200 rounded h-2">
-            <div
-              class="bg-blue-500 h-2 rounded"
-              :style="{ width: (cat.count / totalBooks * 100) + '%' }"
-            ></div>
-          </div>
-        </div>
-      </div>
-  </aside>
+    <div v-if="loading" class="text-gray-500">Loading...</div>
+    <div v-else-if="error" class="text-red-500">Failed to load books.</div>
+    <ul v-else>
+      <li v-for="book in books" :key="book.id" class="mb-2 p-4 bg-gray-100 rounded">
+        <div class="font-bold">{{ book.title }}</div>
+        <div class="text-gray-600">{{ book.description }}</div>
+        <div class="text-sm text-gray-500">Author ID: {{ book.author_id }}</div>
+        <div class="text-sm text-gray-500">Category ID: {{ book.category_id }}</div>
+        <div class="text-sm text-gray-500">Quantity: {{ book.quantity }}</div>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-const search = ref('')
-const selectedCategory = ref('')
-const categories = ref([
-  'Youth Novel', 'Science', 'History', 'Technology', 'Self Development', 'Ministry of Education', 'Song books'
-])
-
-// Example books data (add more as needed)
-const books = ref([
-  { id: 'N001', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', available: 5, borrow: 2, category: 'Youth Novel' },
-  { id: 'N002', title: 'To Kill a Mockingbird', author: 'Harper Lee', available: 7, borrow: 3, category: 'Youth Novel' },
-  { id: 'H001', title: 'Sapiens', author: 'Yuval Noah Harari', available: 4, borrow: 1, category: 'History' },
-  { id: 'S001', title: 'A Brief History of Time', author: 'Stephen Hawking', available: 6, borrow: 2, category: 'Science' },
-  { id: 'T001', title: 'Clean Code', author: 'Robert C. Martin', available: 3, borrow: 1, category: 'Technology' },
-  { id: 'SD001', title: 'Atomic Habits', author: 'James Clear', available: 8, borrow: 4, category: 'Self Development' },
-  // ...add more books for each category
-])
-
-const filteredBooks = computed(() => {
-  return books.value.filter(book => {
-    const matchesSearch =
-      book.title.toLowerCase().includes(search.value.toLowerCase()) ||
-      book.author.toLowerCase().includes(search.value.toLowerCase()) ||
-      book.category.toLowerCase().includes(search.value.toLowerCase())
-    const matchesCategory =
-      !selectedCategory.value || book.category === selectedCategory.value
-    return matchesSearch && matchesCategory
-  })
+const books = ref([])
+const loading = ref(true)
+const error = ref(false)
+const showAddBook = ref(false)
+const newBook = ref({
+  title: '',
+  description: '',
+  author_id: 1,
+  category_id: 1,
+  quantity: 1,
+  created_by: 1
 })
 
-const totalBooks = computed(() => books.value.length)
+// Replace with your real token
+const AUTH_TOKEN = 'YOUR_TOKEN_HERE'
 
-const categoryStats = computed(() => {
-  return categories.value.map(cat => {
-    const count = books.value.filter(book => book.category === cat).length
-    return { name: cat, count }
-  })
-})
+async function fetchBooks() {
+  loading.value = true
+  error.value = false
+  try {
+    const response = await axios.get('http://localhost:3000/api/books')
+    books.value = response.data
+  } catch (e) {
+    error.value = true
+  }
+  loading.value = false
+}
 
-function borrowBook(book) {
-  if (book.available > 0) {
-    book.available--
-    book.borrow++
-    let borrowed = JSON.parse(localStorage.getItem('borrowedBooks') || '[]')
-    const idx = borrowed.findIndex(b => b.id === book.id)
-    const borrowDate = new Date().toLocaleString()
-    if (idx !== -1) {
-      borrowed[idx].borrow++
-      borrowed[idx].lastBorrowed = borrowDate
-    } else {
-      borrowed.push({ ...book, borrow: 1, available: undefined, lastBorrowed: borrowDate })
+async function addBook() {
+  try {
+    await axios.post(
+      'http://localhost:3000/api/books',
+      newBook.value,
+      {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    )
+    showAddBook.value = false
+    // Reset form
+    newBook.value = {
+      title: '',
+      description: '',
+      author_id: 1,
+      category_id: 1,
+      quantity: 1,
+      created_by: 1
     }
-    localStorage.setItem('borrowedBooks', JSON.stringify(borrowed))
+    fetchBooks()
+  } catch (e) {
+    alert('Failed to add book')
   }
 }
+
+onMounted(fetchBooks)
 </script>
