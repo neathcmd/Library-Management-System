@@ -6,10 +6,13 @@ const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
 const passwordError = ref(false);
+const loginError = ref("");
 const router = useRouter();
 
 const handleSubmit = async () => {
   passwordError.value = !username.value || !password.value;
+  loginError.value = "";
+
   if (passwordError.value) return;
 
   try {
@@ -26,20 +29,20 @@ const handleSubmit = async () => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      alert(`Login failed: ${errorData.message || "Invalid credentials"}`);
+      loginError.value = errorData.message || "Invalid username or password";
       return;
     }
 
     const data = await response.json();
     localStorage.setItem("token", data.token);
-
     router.push("/");
   } catch (error) {
     console.error("Login error:", error);
-    alert("An error occurred. Please try again.");
+    loginError.value = "An error occurred. Please try again.";
   }
 };
 </script>
+
 <template>
   <div
     class="flex flex-col md:flex-row w-full h-screen items-center justify-center bg-amber-50"
@@ -76,7 +79,6 @@ const handleSubmit = async () => {
             ⚠️ This field is required
           </p>
         </div>
-
         <div class="mb-2">
           <label class="block text-sm font-medium text-gray-700 mb-1"
             >Password</label
@@ -97,8 +99,10 @@ const handleSubmit = async () => {
           >
             ⚠️ This field is required
           </p>
+          <p v-if="loginError" class="text-sm text-red-600 mt-1">
+            ⚠️ {{ loginError }}
+          </p>
         </div>
-
         <div class="mb-6">
           <label class="inline-flex items-center">
             <input
@@ -109,12 +113,9 @@ const handleSubmit = async () => {
             <span class="ml-2 text-sm text-gray-600">Show password</span>
           </label>
         </div>
-
         <button
-          v-if="!passwordError"
-          :disabled="!username || !password"
           type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
         >
           Continue
         </button>
