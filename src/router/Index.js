@@ -7,6 +7,7 @@ import Dashboard from "../pages/admin/Dashboard.vue";
 import Books from "../pages/book/Books.vue";
 import Students from "../pages/student/Students.vue";
 import Borrow from "../pages/borrow/Borrow.vue";
+import AddStudent from "../pages/student/AddStudentForm.vue";
 
 // Auth Page
 import Login from "../pages/auth/Login.vue";
@@ -50,6 +51,10 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/add-student",
+    component: AddStudent,
+  },
 ];
 
 const router = createRouter({
@@ -57,13 +62,13 @@ const router = createRouter({
   routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//   const isAuthenticated = !!localStorage.getItem("token");
-//   if (to.meta.requiresAuth && !isAuthenticated) {
-//     next({ name: "Login" });
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem("token");
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: "Login" });
+  } else {
+    next();
+  }
+});
 
 export default router;
