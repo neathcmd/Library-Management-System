@@ -1,94 +1,101 @@
 <template>
   <div>
-    <h2 class="title">Student List</h2>
-    <table class="student-table">
-      <thead>
+    <h2 class="text-4xl font-extrabold mb-10 text-[#18204c] text-center">
+      Student List
+    </h2>
+
+    <div class="flex justify-start mb-4">
+      <router-link to="/add-student">
+        <BaseButton variant="primary" label="+ Add New Student" />
+      </router-link>
+    </div>
+
+    <table class="w-full border border-collapse">
+      <thead class="bg-gray-800 text-white">
         <tr>
-          <th>Student ID</th>
-          <th>Full Name</th>
-          <th>Username</th>
-          <th>ID_Card</th>
-          <th>Class</th>
-          <th>Phone No.</th>
+          <th class="p-2 border">#</th>
+          <th class="p-2 border">ID Card</th>
+          <th class="p-2 border">Full Name</th>
+          <th class="p-2 border">Class</th>
+          <th class="p-2 border">Created By</th>
+          <th class="p-2 border">Delete</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(student, index) in students" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ student.fullName }}</td>
-          <td>{{ student.username }}</td>
-          <td>{{ student.idCard }}</td>
-          <td>{{ student.class }}</td>
-          <td>{{ student.phone }}</td>
-        </tr>
-
-        <!-- Optional: empty rows for design like screenshot -->
-        <tr v-for="n in 10 - students.length" :key="'empty-' + n">
-          <td colspan="6">&nbsp;</td>
+        <tr
+          v-for="(student, index) in students"
+          :key="student.id"
+          class="border-b"
+        >
+          <td class="p-2 border">{{ index + 1 }}</td>
+          <td class="p-2 border">{{ student.id_card }}</td>
+          <td class="p-2 border">{{ student.full_name }}</td>
+          <td class="p-2 border">{{ student.class }}</td>
+          <td class="p-2 border">{{ student.created_by ?? "N/A" }}</td>
+          <td class="p-2">
+            <button
+              @click="deleteStudent(student.id, index)"
+              class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 </template>
 
-<script>
-export default {
-  name: "Students",
-  data() {
-    return {
-      students: [
-        {
-          fullName: "Try Kimhong",
-          username: "trykimhong@123",
-          idCard: "22217-4",
-          class: "WMAD",
-          phone: "09409528688",
-        },
-        {
-          fullName: "Sok Dara",
-          username: "sokdara98",
-          idCard: "22456-8",
-          class: "WMAD",
-          phone: "093456789",
-        },
-        {
-          fullName: "San Ma Sreymom",
-          username: "sanmasreymom",
-          idCard: "22345-2",
-          class: "WMAD",
-          phone: "092345678",
-        },
-        // Add more students here if needed
-      ],
-    };
-  },
-};
-</script>
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import BaseButton from "../../components/BaseButton.vue";
 
-<style scoped>
-.title {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 16px;
-  color: #18204c;
-}
-.student-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.student-table th {
-  background-color: #18204c;
-  color: white;
-  padding: 10px;
-  text-align: left;
-  border-radius: 4px;
-}
-.student-table td {
-  padding: 10px;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-}
-.student-table tbody tr:nth-child(even) td {
-  background-color: #f1f1f1;
-}
-</style>
+const students = ref([]);
+
+const fetchStudents = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      "http://localhost:3000/api/students?page=1&limit=10",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+
+    const data = response.data;
+    console.log("Fetched students:", data);
+
+    students.value = data.students || [];
+  } catch (error) {
+    console.error("Error fetching students:", error);
+  }
+};
+
+const deleteStudent = async (studentId, index) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.delete(`http://localhost:3000/api/students/${studentId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    students.value.splice(index, 1);
+    alert("Student deleted successfully.");
+  } catch (error) {
+    console.error("Failed to delete student:", error);
+    alert("Failed to delete student.");
+  }
+};
+
+onMounted(() => {
+  fetchStudents();
+});
+</script>

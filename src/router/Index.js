@@ -7,6 +7,7 @@ import Dashboard from "../pages/admin/Dashboard.vue";
 import Books from "../pages/book/Books.vue";
 import Students from "../pages/student/Students.vue";
 import Borrow from "../pages/borrow/Borrow.vue";
+import AddStudent from "../pages/student/AddStudentForm.vue";
 
 // Auth Page
 import Login from "../pages/auth/Login.vue";
@@ -49,6 +50,10 @@ const routes = [
         component: Borrow,
       },
     ],
+  },
+  {
+    path: "/add-student",
+    component: AddStudent,
   },
 ];
 
