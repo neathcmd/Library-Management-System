@@ -10,29 +10,30 @@ const Title = "PSE Library Management System";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const AdminProfile = reactive({
+const AdminProfile = ref({
   name: "",
-  alt: "admin profile info",
-  img: "",
   username: "",
+  img: "",
+  alt: "",
 });
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get(`${BASE_URL}/api/authors`);
+    const { data } = await axios.get(`${BASE_URL}/api/auth/login`);
     Object.assign(AdminProfile, {
-      name: data.name,
+      full_name: data.full_name,
       alt: data.alt,
       img: data.img,
-      username: data.username,
+      role: data.role,
     });
+    console.log(data);
   } catch (error) {
     console.error("No Admin user:", error);
     Object.assign(AdminProfile, {
-      name: "Admin User",
+      full_name: "Admin User",
       alt: "Logo",
       img: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      username: "@admin",
+      role: "@admin",
     });
   }
 });
@@ -77,9 +78,9 @@ const toggleDropdown = () => {
           </div>
           <div class="flex flex-col">
             <p class="text-slate-700 font-semibold text-sm leading-tight">
-              {{ AdminProfile.name }}
+              {{ AdminProfile.full_name }}
             </p>
-            <p class="text-slate-500 text-xs">Administrator</p>
+            <p class="text-slate-500 text-xs">{{ AdminProfile.role }}</p>
           </div>
 
           <i

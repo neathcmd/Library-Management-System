@@ -4,22 +4,35 @@ import BarChart from "../../components/BarChart.vue";
 import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-console.log("Api base url", BASE_URL);
 
 const books = ref([]);
 const categories = ref([]);
 const students = ref([]);
 
 onMounted(async () => {
-  const [bookres, categoriesres, studentres] = await Promise.all([
-    axios.get(`${BASE_URL}/api/books`),
-    axios.get(`${BASE_URL}/api/categories`),
-    axios.get(`${BASE_URL}/api/students`),
-  ]);
+  const token = localStorage.getItem("token");
 
-  books.value = bookRes.data;
-  bookCategories.value = categoryRes.data;
-  students.value = studentRes.data;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  };
+
+  try {
+    const [bookres, categoriesres, studentres] = await Promise.all([
+      axios.get(`${BASE_URL}/api/books`, config),
+      axios.get(`${BASE_URL}/api/categories`, config),
+      axios.get(`${BASE_URL}/api/students`, config),
+    ]);
+
+    books.value = bookres.data;
+    categories.value = categoriesres.data;
+    students.value = studentres.data;
+  } catch (error) {
+    console.error("Failed to fetch data:", error);
+  }
 });
 
 // count funtion
@@ -27,20 +40,27 @@ const totalBooks = computed(() => books.value.length);
 const totalCategory = computed(() => categories.value.length);
 const totalStudents = computed(() => students.value.length);
 
-onMounted(() => {
-  const borrowData = async () => {
-    try {
-      const borrowRes = await axios.get(`${BASE_URL}/api/borrows`);
-      console.log(borrowRes.data);
-      return borrowRes.data;
-    } catch (error) {
-      console.log("Can't fetch data", error);
-      return null;
-    }
-  };
+// onMounted(() => {
+//   borrowData();
+// });
 
-  borrowData();
-});
+// const borrowData = async () => {
+//   try {
+//     const token = localStorage.getItem("token");
+//     const borrowRes = await axios.get(`${BASE_URL}/api/borrows`, {
+//       headers: {
+//         "Content-Type": "application/json",
+//         Accept: "application/json",
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     console.log(borrowRes.data);
+//     return borrowRes.data;
+//   } catch (error) {
+//     console.log("Can't fetch data", error);
+//     return null;
+//   }
+// };
 </script>
 
 <template>
