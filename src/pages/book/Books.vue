@@ -1,81 +1,112 @@
 <template>
-  <!-- Header -->
-  <div class="w-full mb-6 bg-white px-4 py-3 rounded-lg shadow-sm">
-    <div
-      class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4"
-    >
-      <!-- Search Input with Icon -->
-      <div class="relative flex-1">
-        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-          <i class="fa-solid fa-magnifying-glass w-5 h-5"></i>
-        </span>
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Search books, authors, or categories..."
-          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-        />
+  <div class="flex gap-6">
+    <!-- Main Content -->
+    <div class="flex-1">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-4">
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Search books, authors, or categories..."
+            class="w-96 px-4 py-2 border border-gray-300 rounded focus:outline-none"
+          />
+          <button
+            class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 font-semibold"
+            @click="showAddBook = true"
+          >
+            + Add New Book
+          </button>
+        </div>
       </div>
 
-      <BaseButton label="+ Add New Book" variant="primary" />
-      <router-link to="/borrow">
-        <BaseButton label="Borrowed" variant="secondary"
-      /></router-link>
-    </div>
-  </div>
+      <!-- Add Book Modal -->
+      <div v-if="showAddBook" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded shadow w-96">
+          <h2 class="text-lg font-bold mb-4">Add New Book</h2>
+          <input v-model="newBook.title" placeholder="Title" class="w-full mb-2 px-3 py-2 border rounded" />
+          <input v-model="newBook.description" placeholder="Description" class="w-full mb-2 px-3 py-2 border rounded" />
+          <input v-model="newBook.author_name" placeholder="Author" class="w-full mb-2 px-3 py-2 border rounded" />
+          <input v-model="newBook.category" placeholder="Category" class="w-full mb-2 px-3 py-2 border rounded" />
+          <input v-model.number="newBook.quantity" type="number" min="1" placeholder="Quantity" class="w-full mb-2 px-3 py-2 border rounded" />
+          <div class="flex justify-end gap-2">
+            <button @click="showAddBook = false" class="px-4 py-2 rounded bg-gray-300">Cancel</button>
+            <button @click="addBook" class="px-4 py-2 rounded bg-blue-600 text-white">Add</button>
+          </div>
+        </div>
+      </div>
 
-  <div class="flex gap-6">
-    <div class="flex-1">
-      <!-- Books and Filter -->
-      <div class="bg-white shadow p-6 rounded-lg">
+      <!-- Books Table -->
+      <div class="bg-white rounded shadow p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
             <span class="text-xl font-bold">Books</span>
-            <span class="ml-2 text-gray-500"
-              >({{ filteredBooks.length }} books)</span
-            >
+            <span class="ml-2 text-gray-500">({{ filteredBooks.length }} books)</span>
           </div>
           <div class="flex items-center gap-2">
             <span class="font-semibold text-gray-700">Sort by Category:</span>
-            <select
-              v-model="selectedCategory"
-              class="border border-gray-300 px-3 py-2 rounded-md"
-            >
+            <select v-model="selectedCategory" class="border px-3 py-2 rounded">
               <option value="">All Categories</option>
-              <option v-for="cat in categories" :key="cat" :value="cat">
-                {{ cat }}
-              </option>
+              <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
             </select>
           </div>
         </div>
-        <!-- Book Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <div
-            v-for="book in filteredBooks"
-            :key="book.id"
-            class="bg-gray-100 rounded shadow p-4 flex flex-col"
+
+        <!-- Table -->
+        <div class="overflow-auto">
+          <table class="min-w-full table-auto border-collapse">
+            <thead class="bg-gray-100 text-left text-sm font-semibold text-gray-700">
+              <tr>
+                <th class="px-4 py-2 border">#</th>
+                <th class="px-4 py-2 border">Title</th>
+                <th class="px-4 py-2 border">Description</th>
+                <th class="px-4 py-2 border">Author</th>
+                <th class="px-4 py-2 border">Category</th>
+                <th class="px-4 py-2 border">Available</th>
+                <th class="px-4 py-2 border">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(book, index) in filteredBooks" :key="book.id" class="text-sm text-gray-800 hover:bg-gray-50">
+                <td class="px-4 py-2 border">{{ index + 1 + (currentPage - 1) * limit }}</td>
+                <td class="px-4 py-2 border">{{ book.title }}</td>
+                <td class="px-4 py-2 border">{{ book.description }}</td>
+                <td class="px-4 py-2 border">{{ book.author_name }}</td>
+                <td class="px-4 py-2 border">{{ book.category }}</td>
+                <td class="px-4 py-2 border">{{ book.quantity }}</td>
+                <td class="px-4 py-2 border">
+                  <button
+                    :disabled="book.quantity === 0"
+                    @click="borrowBook(book)"
+                    class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    Borrow
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex justify-end mt-4 gap-2">
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
           >
-            <div class="flex-1 flex flex-col justify-between">
-              <div>
-                <div class="h-40 bg-gray-300 rounded mb-4"></div>
-                <div class="font-bold text-lg mb-1">{{ book.title }}</div>
-                <div class="text-gray-600 mb-2">{{ book.author }}</div>
-                <div class="text-sm text-gray-500 mb-2">
-                  Available: {{ book.available }}
-                </div>
-                <div class="text-sm text-gray-500 mb-2">
-                  Borrowed: {{ book.borrow }}
-                </div>
-              </div>
-              <button
-                :disabled="book.available === 0"
-                @click="borrowBook(book)"
-                class="mt-4 px-4 py-2 rounded bg-blue-900 text-white hover:bg-blue-800 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                Borrow
-              </button>
-            </div>
-          </div>
+            Previous
+          </button>
+          <span class="px-4 py-2 text-gray-700 font-medium">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
@@ -87,15 +118,15 @@
           <span class="text-xl font-bold">Categories</span>
           <span class="text-gray-500">{{ totalBooks }} total</span>
         </div>
-        <div v-for="cat in categoryStats" :key="cat.name" class="mb-4">
+        <div v-for="cat in categories" :key="cat" class="mb-4">
           <div class="flex justify-between mb-1">
-            <span class="text-gray-700">{{ cat.name }}</span>
-            <span class="text-gray-500">{{ cat.count }}</span>
+            <span class="text-gray-700">{{ cat }}</span>
+            <span class="text-gray-500">{{ categoryCount(cat) }}</span>
           </div>
           <div class="w-full bg-gray-200 rounded h-2">
             <div
               class="bg-blue-500 h-2 rounded"
-              :style="{ width: (cat.count / totalBooks) * 100 + '%' }"
+              :style="{ width: (categoryCount(cat) / totalBooks * 100) + '%' }"
             ></div>
           </div>
         </div>
@@ -105,114 +136,112 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import BaseButton from "../../components/BaseButton.vue";
+import { ref, computed, onMounted } from 'vue'
 
-const search = ref("");
-const selectedCategory = ref("");
-const categories = ref([
-  "Youth Novel",
-  "Science",
-  "History",
-  "Technology",
-  "Self Development",
-  "Ministry of Education",
-  "Song books",
-]);
+// JWT token
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImxpYmVyaWFuIiwiaWF0IjoxNzUwNzM3ODU5fQ.LNgnneFGZcBePz7V-D_EnwGRxxE2xYkydmbRHnPj-Y0'
 
-// Example books data (add more as needed)
-const books = ref([
-  {
-    id: "N001",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    available: 5,
-    borrow: 1,
-    category: "Youth Novel",
-  },
-  {
-    id: "N002",
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    available: 7,
-    borrow: 1,
-    category: "Youth Novel",
-  },
-  {
-    id: "H001",
-    title: "Sapiens",
-    author: "Yuval Noah Harari",
-    available: 4,
-    borrow: 1,
-    category: "History",
-  },
-  {
-    id: "S001",
-    title: "A Brief History of Time",
-    author: "Stephen Hawking",
-    available: 6,
-    borrow: 1,
-    category: "Science",
-  },
-  {
-    id: "T001",
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    available: 3,
-    borrow: 1,
-    category: "Technology",
-  },
-  {
-    id: "SD001",
-    title: "Atomic Habits",
-    author: "James Clear",
-    available: 8,
-    borrow: 1,
-    category: "Self Development",
-  },
-  // ...add more books for each category
-]);
+// UI State
+const search = ref('')
+const selectedCategory = ref('')
+const showAddBook = ref(false)
+
+const newBook = ref({
+  title: '',
+  description: '',
+  author_name: '',
+  category: '',
+  quantity: 1
+})
+
+// Pagination State
+const currentPage = ref(1)
+const totalPages = ref(1)
+const limit = 5
+
+const books = ref([])
+
+// Fetch books with pagination
+async function fetchBooks() {
+  try {
+    const res = await fetch(`http://localhost:3000/api/books?page=${currentPage.value}&limit=${limit}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    const data = await res.json()
+    books.value = data.books || []
+    totalPages.value = data.totalPages || 1
+  } catch (error) {
+    console.error('Failed to fetch books:', error)
+  }
+}
+
+// Page controls
+function nextPage() {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    fetchBooks()
+  }
+}
+function prevPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    fetchBooks()
+  }
+}
+
+onMounted(fetchBooks)
 
 const filteredBooks = computed(() => {
-  return books.value.filter((book) => {
-    const matchesSearch =
-      book.title.toLowerCase().includes(search.value.toLowerCase()) ||
-      book.author.toLowerCase().includes(search.value.toLowerCase()) ||
-      book.category.toLowerCase().includes(search.value.toLowerCase());
-    const matchesCategory =
-      !selectedCategory.value || book.category === selectedCategory.value;
-    return matchesSearch && matchesCategory;
-  });
-});
+  return books.value.filter(book => {
+    const text = search.value.toLowerCase()
+    const matchSearch =
+      book.title.toLowerCase().includes(text) ||
+      (book.author_name?.toLowerCase() ?? '').includes(text) ||
+      book.category.toLowerCase().includes(text)
 
-const totalBooks = computed(() => books.value.length);
+    const matchCat = !selectedCategory.value || book.category === selectedCategory.value
+    return matchSearch && matchCat
+  })
+})
 
-const categoryStats = computed(() => {
-  return categories.value.map((cat) => {
-    const count = books.value.filter((book) => book.category === cat).length;
-    return { name: cat, count };
-  });
-});
+const totalBooks = computed(() => books.value.length)
 
-const borrowBook = (book) => {
-  if (book.available > 0) {
-    book.available--;
-    book.borrow++;
-    let borrowed = JSON.parse(localStorage.getItem("borrowedBooks") || "[]");
-    const idx = borrowed.findIndex((b) => b.id === book.id);
-    const borrowDate = new Date().toLocaleString();
-    if (idx !== -1) {
-      borrowed[idx].borrow++;
-      borrowed[idx].lastBorrowed = borrowDate;
-    } else {
-      borrowed.push({
-        ...book,
-        borrow: 1,
-        available: undefined,
-        lastBorrowed: borrowDate,
-      });
-    }
-    localStorage.setItem("borrowedBooks", JSON.stringify(borrowed));
+const categories = computed(() => {
+  const all = books.value.map(book => book.category)
+  return [...new Set(all)]
+})
+
+function categoryCount(cat) {
+  return books.value.filter(book => book.category === cat).length
+}
+
+// Just push locally for now
+function addBook() {
+  const { title, description, author_name, category, quantity } = newBook.value
+  if (title && author_name && category && quantity > 0) {
+    books.value.push({
+      id: Date.now(),
+      title,
+      description,
+      author_name,
+      category,
+      quantity,
+      created_by: 1
+    })
+    showAddBook.value = false
+    newBook.value = { title: '', description: '', author_name: '', category: '', quantity: 1 }
+  } else {
+    alert('Please fill all fields correctly.')
   }
-};
+}
+
+function borrowBook(book) {
+  if (book.quantity > 0) {
+    book.quantity--
+  }
+}
 </script>
