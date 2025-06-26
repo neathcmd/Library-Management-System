@@ -1,12 +1,14 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import BarChart from "../../components/BarChart.vue";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
-const books = ref([]);
-const categories = ref([]);
+const totalBooks = ref(0);
+const totalStudents = ref(0);
+const totalCategory = ref(0);
+const totalBorrows = ref(0);
+const borrowNotReturn = ref(0);
+const bookReturned = ref(0);
 const students = ref([]);
 
 onMounted(async () => {
@@ -21,46 +23,25 @@ onMounted(async () => {
   };
 
   try {
-    const [bookres, categoriesres, studentres] = await Promise.all([
-      axios.get(`${BASE_URL}/api/books`, config),
-      axios.get(`${BASE_URL}/api/categories`, config),
-      axios.get(`${BASE_URL}/api/students`, config),
-    ]);
+    const res = await axios.get("http://localhost:3000/api/dashboard", config);
+    const data = res.data;
 
-    books.value = bookres.data;
-    categories.value = categoriesres.data;
-    students.value = studentres.data;
+    totalBooks.value = data.total_books || 0;
+    totalStudents.value = data.total_students || 0;
+    totalCategory.value = 0;
+    totalBorrows.value = data.total_borrows || 0;
+    borrowNotReturn.value = data.borrowed_not_returned || 0;
+    bookReturned.value = data.returned || 0;
+
+    const studentRes = await axios.get(
+      "http://localhost:3000/api/students?page=1&limit=10",
+      config
+    );
+    console.log(studentRes.data.students, "res");
   } catch (error) {
-    console.error("Failed to fetch data:", error);
+    console.error("Failed to fetch dashboard or students:", error);
   }
 });
-
-// count funtion
-const totalBooks = computed(() => books.value.length);
-const totalCategory = computed(() => categories.value.length);
-const totalStudents = computed(() => students.value.length);
-
-// onMounted(() => {
-//   borrowData();
-// });
-
-// const borrowData = async () => {
-//   try {
-//     const token = localStorage.getItem("token");
-//     const borrowRes = await axios.get(`${BASE_URL}/api/borrows`, {
-//       headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json",
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     console.log(borrowRes.data);
-//     return borrowRes.data;
-//   } catch (error) {
-//     console.log("Can't fetch data", error);
-//     return null;
-//   }
-// };
 </script>
 
 <template>
@@ -83,23 +64,6 @@ const totalStudents = computed(() => students.value.length);
         </div>
       </router-link>
 
-      <!-- Total Category -->
-      <router-link to="/books" class="block">
-        <div
-          class="p-6 bg-white text-gray-900 flex items-center justify-between rounded-lg hover:shadow-md transition"
-        >
-          <div>
-            <h1 class="text-xl font-semibold">Total Category</h1>
-            <p class="text-3xl font-bold mt-1">{{ totalCategory }}</p>
-          </div>
-          <div
-            class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
-          >
-            <i class="fa-solid fa-layer-group text-xl text-blue-600"></i>
-          </div>
-        </div>
-      </router-link>
-
       <!-- Total Students -->
       <router-link to="/students" class="block">
         <div
@@ -108,6 +72,57 @@ const totalStudents = computed(() => students.value.length);
           <div>
             <h1 class="text-xl font-semibold">Total Students</h1>
             <p class="text-3xl font-bold mt-1">{{ totalStudents }}</p>
+          </div>
+          <div
+            class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
+          >
+            <i class="fa-solid fa-user-graduate text-xl text-blue-600"></i>
+          </div>
+        </div>
+      </router-link>
+
+      <!-- total_borrows -->
+      <router-link to="/borrow" class="block">
+        <div
+          class="p-6 bg-white text-gray-900 flex items-center justify-between rounded-lg hover:shadow-md transition"
+        >
+          <div>
+            <h1 class="text-xl font-semibold">Total Borrow</h1>
+            <p class="text-3xl font-bold mt-1">{{ totalBorrows }}</p>
+          </div>
+          <div
+            class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
+          >
+            <i class="fa-solid fa-user-graduate text-xl text-blue-600"></i>
+          </div>
+        </div>
+      </router-link>
+
+      <!-- borrowed_not_returned -->
+      <router-link to="/" class="block">
+        <div
+          class="p-6 bg-white text-gray-900 flex items-center justify-between rounded-lg hover:shadow-md transition"
+        >
+          <div>
+            <h1 class="text-xl font-semibold">borrowed not returned</h1>
+            <p class="text-3xl font-bold mt-1">{{ borrowNotReturn }}</p>
+          </div>
+          <div
+            class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
+          >
+            <i class="fa-solid fa-user-graduate text-xl text-blue-600"></i>
+          </div>
+        </div>
+      </router-link>
+
+      <!-- returned -->
+      <router-link to="/" class="block">
+        <div
+          class="p-6 bg-white text-gray-900 flex items-center justify-between rounded-lg hover:shadow-md transition"
+        >
+          <div>
+            <h1 class="text-xl font-semibold">Returned</h1>
+            <p class="text-3xl font-bold mt-1">{{ bookReturned }}</p>
           </div>
           <div
             class="bg-blue-500/20 p-4 rounded-xl flex items-center justify-center"
@@ -131,14 +146,14 @@ const totalStudents = computed(() => students.value.length);
         </div>
       </div>
 
-      <!-- Student borrowing section  -->
+      <!-- Student section  -->
       <div class="lg:col-span-1">
         <div class="border border-gray-300 rounded-lg p-6 mt-6 bg-white">
           <!-- header -->
           <div class="flex items-center justify-between">
             <div>
               <h1 class="text-xl font-semibold text-gray-900">
-                Current Borrowers
+                Current Students
               </h1>
             </div>
             <router-link to="/borrow" class="group">
@@ -173,30 +188,33 @@ const totalStudents = computed(() => students.value.length);
           </div>
 
           <div class="space-y-3 max-h-[25rem] overflow-y-auto">
-            <div
-              v-for="student in students"
-              :key="student.id"
-              class="bg-gray-200 rounded-lg p-4 hover:border hover:border-gray-700 transition-colors"
-            >
-              <div class="flex flex-col space-y-2">
-                <div class="font-semibold text-gray-900 text-sm">
-                  {{ student.name }}
-                </div>
-                <div class="text-gray-800 text-xs">
-                  {{ student.book }}
-                </div>
-                <div class="flex justify-between items-center">
-                  <span
-                    class="text-xs bg-purple-500/20 text-gray-900 px-2 py-1 rounded"
-                  >
-                    {{ student.category }}
-                  </span>
-                  <span class="text-xs text-gray-800">
-                    {{ student.borrowDate }}
-                  </span>
+            <div v-if="students.length">
+              <div
+                v-for="student in studentRes.data.students"
+                :key="student.id"
+                class="bg-gray-200 rounded-lg p-4 hover:border hover:border-gray-700 transition-colors"
+              >
+                <div class="flex flex-col space-y-2">
+                  <div class="font-semibold text-gray-900 text-sm">
+                    {{ student.full_name }}
+                  </div>
+                  <div class="text-gray-800 text-xs">
+                    ID: {{ student.id_card }}
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span
+                      class="text-xs bg-purple-500/20 text-gray-900 px-2 py-1 rounded"
+                    >
+                      {{ student.class }}
+                    </span>
+                    <span class="text-xs text-gray-800">
+                      #{{ student.created_by }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div v-else>Loading...</div>
           </div>
         </div>
       </div>
