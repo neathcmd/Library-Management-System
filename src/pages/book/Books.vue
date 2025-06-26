@@ -3,20 +3,55 @@
     <!-- Main Content -->
     <div class="flex-1">
       <!-- Header -->
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-4">
-          <input
-            v-model="search"
-            type="text"
-            placeholder="Search books, authors, or categories..."
-            class="w-96 px-4 py-2 border border-gray-300 rounded focus:outline-none"
-          />
-          <button
-            class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 font-semibold"
+      <div
+        class="flex items-center justify-between mb-4 bg-white p-4 rounded-lg"
+      >
+        <div class="flex items-center gap-3 w-full">
+          <div class="relative flex-1 max-w-[54rem]">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
+              <i class="fa-solid fa-magnifying-glass h-5 w-5 text-gray-500"></i>
+            </div>
+
+            <input
+              v-model="search"
+              type="text"
+              placeholder="Search books, authors, or categories..."
+              class="w-full pl-10 pr-4 py-3 border border-gray-300 bg-white rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400"
+            />
+
+            <div
+              v-if="search"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <button
+                @click="search = ''"
+                class="text-gray-400 hover:text-gray-600 transition-colors duration-150"
+              >
+                <svg
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <BaseButton
+            label="+ Add New Book"
+            variant="primary"
             @click="showAddBook = true"
-          >
-            + Add New Book
-          </button>
+            class="whitespace-nowrap"
+          />
         </div>
       </div>
 
@@ -122,13 +157,13 @@
                 <td class="px-4 py-2 border">{{ book.category }}</td>
                 <td class="px-4 py-2 border">{{ book.quantity }}</td>
                 <td class="px-4 py-2 border">
-                  <button
+                  <BaseButton
+                    label="Borrow"
+                    variant="primary"
                     :disabled="book.quantity === 0"
                     @click="borrowBook(book)"
-                    class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                  >
-                    Borrow
-                  </button>
+                    customClass="px-3 py-1 rounded "
+                  />
                 </td>
               </tr>
             </tbody>
@@ -137,29 +172,31 @@
 
         <!-- Pagination Controls -->
         <div class="flex justify-end mt-4 gap-2">
-          <button
+          <BaseButton
+            label="Previous"
+            variant="secondary"
             @click="prevPage"
             :disabled="currentPage === 1"
-            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
-          >
-            Previous
-          </button>
+            customClass="px-4 py-2 rounded  "
+          />
+
           <span class="px-4 py-2 text-gray-700 font-medium">
             Page {{ currentPage }} of {{ totalPages }}
           </span>
-          <button
+
+          <BaseButton
+            label="Next"
+            variant="primary"
             @click="nextPage"
             :disabled="currentPage === totalPages"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            Next
-          </button>
+            customClass="px-4 py-2 rounded"
+          />
         </div>
       </div>
     </div>
 
     <!-- Sidebar -->
-    <aside class="w-80">
+    <!-- <aside class="w-80">
       <div class="bg-white rounded shadow p-6">
         <div class="flex items-center justify-between mb-4">
           <span class="text-xl font-bold">Categories</span>
@@ -178,7 +215,7 @@
           </div>
         </div>
       </div>
-    </aside>
+    </aside> -->
   </div>
 </template>
 

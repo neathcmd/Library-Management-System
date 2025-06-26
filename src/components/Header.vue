@@ -11,30 +11,45 @@ const Title = "PSE Library Management System";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AdminProfile = ref({
-  name: "",
+  full_name: "",
   username: "",
   img: "",
   alt: "",
+  role: "",
 });
 
 onMounted(async () => {
+  const token = localStorage.getItem("token");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  };
+
   try {
-    const { data } = await axios.get(`${BASE_URL}/api/auth/login`);
-    Object.assign(AdminProfile, {
-      full_name: data.full_name,
-      alt: data.alt,
-      img: data.img,
-      role: data.role,
-    });
-    console.log(data);
+    const { data } = await axios.get(`${BASE_URL}/api/auth`, config);
+
+    const userData = data.user;
+
+    AdminProfile.value = {
+      full_name: userData.full_name,
+      username: userData.username,
+      img: userData.img,
+      alt: userData.full_name,
+      role: userData.role,
+    };
   } catch (error) {
     console.error("No Admin user:", error);
-    Object.assign(AdminProfile, {
-      full_name: "Admin User",
-      alt: "Logo",
+    AdminProfile.value = {
+      full_name: "Main Librarian",
+      username: "liberian1",
       img: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      role: "@admin",
-    });
+      alt: "Logo",
+      role: "liberian",
+    };
   }
 });
 
