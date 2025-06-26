@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import BaseButton from "../../components/BaseButton.vue";
 
 const router = useRouter();
 const token = localStorage.getItem("token") || "";
@@ -109,20 +110,19 @@ function goBack() {
           </select>
         </div>
 
-        <button
-          type="submit"
-          class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-sm w-full px-3 py-2"
-        >
-          Add Student
-        </button>
-
-        <button
-          type="button"
+        <BaseButton
+          label="Add Student"
+          variant="primary"
           @click="goBack"
-          class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm w-full px-3 py-2"
-        >
-          Back
-        </button>
+          customClass="px-3 py-2 w-full"
+        />
+
+        <BaseButton
+          label="Back"
+          variant="secondary"
+          @click="goBack"
+          customClass="bg-gray-300 border border-gray-300 text-gray-700 rounded-lg text-sm w-full px-3 py-2"
+        />
       </form>
     </div>
   </div>

@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import BarChart from "../../components/BarChart.vue";
 import axios from "axios";
+import { isComputedPropertyName } from "typescript";
 
 const totalBooks = ref(0);
 const totalStudents = ref(0);
@@ -10,6 +11,22 @@ const totalBorrows = ref(0);
 const borrowNotReturn = ref(0);
 const bookReturned = ref(0);
 const students = ref([]);
+const searchQuery = ref("");
+
+// Filter Student using Computed Property
+const filteredStudents = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return students.value;
+  }
+
+  const query = searchQuery.value.toLowerCase().trim();
+  return students.value.filter(
+    (student) =>
+      student.full_name.toLowerCase().includes(query) ||
+      student.id_card.toLowerCase().includes(query) ||
+      student.class.toLowerCase().includes(query)
+  );
+});
 
 onMounted(async () => {
   const token = localStorage.getItem("token");
@@ -37,7 +54,8 @@ onMounted(async () => {
       "http://localhost:3000/api/students?page=1&limit=10",
       config
     );
-    console.log(studentRes.data.students, "res");
+    students.value = studentRes.data.students;
+    // console.log(studentRes.data.students, "res");
   } catch (error) {
     console.error("Failed to fetch dashboard or students:", error);
   }
@@ -156,7 +174,7 @@ onMounted(async () => {
                 Current Students
               </h1>
             </div>
-            <router-link to="/borrow" class="group">
+            <router-link to="/students" class="group">
               <div
                 class="flex items-center space-x-2 px-3 md:px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
               >
@@ -173,24 +191,25 @@ onMounted(async () => {
           </div>
 
           <!-- Search Input Field-->
-          <div class="py-2">
+          <div class="pt-2 pb-4">
             <div
               class="flex items-center gap-3 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-2 focus-within:ring-blue-500"
             >
               <i class="fa-solid fa-magnifying-glass text-gray-500"></i>
               <input
                 type="text"
-                placeholder="Search"
+                v-model="searchQuery"
+                placeholder="Search by name, ID, or class"
                 class="w-full bg-transparent focus:outline-none text-sm text-gray-700 placeholder-gray-400"
                 aria-label="Search"
               />
             </div>
           </div>
 
-          <div class="space-y-3 max-h-[25rem] overflow-y-auto">
-            <div v-if="students.length">
+          <div class="max-h-[22rem] overflow-y-auto">
+            <div v-if="filteredStudents.length" class="space-y-4">
               <div
-                v-for="student in studentRes.data.students"
+                v-for="student in filteredStudents"
                 :key="student.id"
                 class="bg-gray-200 rounded-lg p-4 hover:border hover:border-gray-700 transition-colors"
               >
@@ -214,7 +233,11 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <div v-else>Loading...</div>
+            <div v-else-if="students.length === 0">Loading...</div>
+            <div v-else class="text-center py-8 text-gray-500">
+              <i class="fa-solid fa-search text-2xl mb-2"></i>
+              <p class="text-sm">No students found matching your search</p>
+            </div>
           </div>
         </div>
       </div>
