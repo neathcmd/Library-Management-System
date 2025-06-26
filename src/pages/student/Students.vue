@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import BaseButton from "../../components/BaseButton.vue";
 
 const router = useRouter();
 const students = ref([]);
@@ -60,11 +61,11 @@ onMounted(() => {
 
     <div class="flex justify-start mb-4">
       <router-link to="/add-student">
-        <button
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          + Add New Student
-        </button>
+        <BaseButton
+          label="+ Add New Student"
+          variant="primary"
+          customClass="px-4 py-2"
+        />
       </router-link>
     </div>
 
@@ -91,12 +92,12 @@ onMounted(() => {
           <td class="p-2 border">{{ student.student_class }}</td>
           <td class="p-2 border">{{ student.created_by ?? "N/A" }}</td>
           <td class="p-2">
-            <button
+            <BaseButton
               @click="deleteStudent(student.id, index)"
-              class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-            >
-              Delete
-            </button>
+              label="Delete"
+              variant="primary"
+              customClass=" px-3 py-1 bg-red-500 hover:bg-red-600"
+            />
           </td>
         </tr>
       </tbody>
