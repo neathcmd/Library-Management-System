@@ -1,30 +1,20 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-// Router
 const router = useRouter();
-
-// Get token from localStorage
 const token = localStorage.getItem("token") || "";
-
-// Form fields
+console.log("Token:", token);
 const fullName = ref("");
 const idCard = ref("");
 const studentClass = ref("");
-const createdBy = ref("");
 
-// API endpoint
+const classOptions = ["wmad", "sales"];
+
 const apiUrl = "http://localhost:3000/api/students";
 
-// Submit form
 async function handleSubmit() {
-  if (
-    !fullName.value ||
-    !idCard.value ||
-    !studentClass.value ||
-    !createdBy.value
-  ) {
+  if (!fullName.value || !idCard.value || !studentClass.value) {
     alert("Please fill in all fields.");
     return;
   }
@@ -32,9 +22,10 @@ async function handleSubmit() {
   const payload = {
     full_name: fullName.value,
     id_card: idCard.value,
-    class: studentClass.value,
-    created_by: Number(createdBy.value),
+    student_class: studentClass.value,
   };
+
+  console.log("Submitting student:", payload);
 
   try {
     const res = await fetch(apiUrl, {
@@ -46,14 +37,21 @@ async function handleSubmit() {
       body: JSON.stringify(payload),
     });
 
+    console.log("Response status:", res.status);
+
     if (!res.ok) {
       const err = await res.json();
+      console.error("Error response:", err);
       throw new Error(err.message || "Failed to create student");
     }
 
     alert("Student created successfully!");
-    router.push("/students");
+
+    router.push("/students").then(() => {
+      window.location.reload();
+    });
   } catch (error) {
+    console.error("Submit error:", error);
     alert("Error: " + error.message);
   }
 }
@@ -65,76 +63,67 @@ function goBack() {
 
 <template>
   <div class="w-full p-4 mb-6 bg-white h-full">
-    <div class="flex p-7 mb-4 h-full">
-      <!-- Form Section -->
-      <div class="ms-6 w-1/2 px-32 py-16 rounded-xl shadow-lg">
-        <h1 class="text-2xl font-bold mb-4 p-4 text-center text-blue-600">
-          Add New Student
-        </h1>
-        <form class="max-w-sm mx-auto space-y-4" @submit.prevent="handleSubmit">
-          <div>
-            <label for="fullName" class="block text-sm font-bold mb-2"
-              >Full Name</label
-            >
-            <input
-              type="text"
-              id="fullName"
-              v-model="fullName"
-              class="shadow border rounded w-full py-2 px-3"
-              required
-            />
-          </div>
-
-          <div>
-            <label for="idCard" class="block text-sm font-bold mb-2"
-              >ID Card</label
-            >
-            <input
-              type="text"
-              id="idCard"
-              v-model="idCard"
-              class="shadow border rounded w-full py-2 px-3"
-              required
-            />
-          </div>
-
-          <div>
-            <label for="studentClass" class="block text-sm font-bold mb-2"
-              >Class</label
-            >
-            <input
-              type="text"
-              id="studentClass"
-              v-model="studentClass"
-              class="shadow border rounded w-full py-2 px-3"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm w-full px-3 py-2 mt-4"
+    <div class="flex flex-col items-center p-7">
+      <h1 class="text-2xl font-bold mb-6 text-blue-600">Add New Student</h1>
+      <form class="w-full max-w-md space-y-4" @submit.prevent="handleSubmit">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="fullName"
+            >Full Name</label
           >
-            Add Student
-          </button>
-          <button
-            type="button"
-            @click="goBack"
-            class="text-gray-700 bg-gray-200 rounded-lg text-sm w-full px-3 py-2 hover:bg-gray-300"
-          >
-            Back
-          </button>
-        </form>
-      </div>
+          <input
+            type="text"
+            id="fullName"
+            v-model="fullName"
+            class="shadow border rounded w-full py-2 px-3"
+            required
+          />
+        </div>
 
-      <!-- Image Section -->
-      <div class="mt-6 ms-6 w-1/2 px-32 py-16">
-        <img
-          class="w-full h-full object-cover"
-          src="../assets/image.png"
-          alt="Student Image"
-        />
-      </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="idCard"
+            >ID Card</label
+          >
+          <input
+            type="text"
+            id="idCard"
+            v-model="idCard"
+            class="shadow border rounded w-full py-2 px-3"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold mb-2" for="studentClass"
+            >Class</label
+          >
+          <select
+            id="studentClass"
+            v-model="studentClass"
+            class="shadow border rounded w-full py-2 px-3"
+            required
+          >
+            <option disabled value="">Select class</option>
+            <option v-for="cls in classOptions" :key="cls" :value="cls">
+              {{ cls }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-sm w-full px-3 py-2"
+        >
+          Add Student
+        </button>
+
+        <button
+          type="button"
+          @click="goBack"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm w-full px-3 py-2"
+        >
+          Back
+        </button>
+      </form>
     </div>
   </div>
 </template>
